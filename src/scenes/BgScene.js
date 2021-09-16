@@ -1,6 +1,5 @@
 import "phaser";
 
-
 export default class BgScene extends Phaser.Scene {
   constructor() {
     super("BgScene");
@@ -15,28 +14,34 @@ export default class BgScene extends Phaser.Scene {
 
     this.cursors = this.input.keyboard.createCursorKeys();
   }
-  createAligned (scene,count,texture,scrollFactor){
+  createAligned(totalWidth, height, texture, scrollFactor) {
+    const w = this.textures.get(texture).getSourceImage().width;
+    const count = Math.ceil(totalWidth / w) * scrollFactor;
 
+    let x = 0;
+    for (let i = 0; i < count; ++i) {
+      const m = this.add
+        .image(x, height, texture)
+        .setScale(1.8)
+        .setOrigin(0, 1)
+        .setScrollFactor(scrollFactor);
+      x += m.width;
+    }
   }
 
   create() {
     const w = this.scale.width;
     const h = this.scale.height;
-    this.add.image(0.5 * w, 0.5 * h, "sky").setScale(2.91).setScrollFactor(0);
+    const totalW = 10 * w;
     this.add
-      .image(0, 0.25 * h, "cloud")
-      .setScale(1)
-      .setOrigin(0, 1)
-      .setScrollFactor(0.15);
-    this.add
-      .image(0, 0.6 * h, "mountain")
-      .setScale(1.8)
-      .setOrigin(0, 1).setScrollFactor(0.2);
-    this.add
-      .image(0, 0.8 * h, "pine1")
-      .setScale(1.8)
-      .setOrigin(0, 1).setScrollFactor(0.5);
-    this.add.image(0, h, "pine2").setScale(1.8).setOrigin(0, 1).setScrollFactor(1);
+      .image(0.5 * w, 0.5 * h, "sky")
+      .setScale(2.91)
+      .setScrollFactor(0);
+
+    this.createAligned(totalW, 0.25 * h, "cloud", 0.05);
+    this.createAligned(totalW, 0.6 * h, "mountain", 0.1);
+    this.createAligned(totalW, 0.8 * h, "pine1", 0.25);
+    this.createAligned(totalW, h, "pine2", 1);
   }
 
   update() {
