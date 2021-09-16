@@ -42,6 +42,8 @@ export default class BgScene extends Phaser.Scene {
     this.createAligned(totalW, 0.6 * h, "mountain", 0.1);
     this.createAligned(totalW, 0.8 * h, "pine1", 0.25);
     this.createAligned(totalW, h, "pine2", 1);
+
+    this.cameras.main.setBounds(0,0,totalW,h);
   }
 
   update() {

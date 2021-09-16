@@ -26,26 +26,60 @@ export default class FgScene extends Phaser.Scene {
       frameWidth: 340,
       frameHeight: 460,   
     });
-    this.load.image("ground", "assets/sprites/ground.png", {
-      frameWidth: 850,
-      frameHeight: 700,
+    this.load.image("ground", "assets/sprites/ground1.png", {
+      frameWidth: 120,
+      frameHeight: 30,
     });
 
     this.load.image("gun", "assets/sprites/gun.png");
     this.load.image("laserBolt", "assets/sprites/laserBolt.png");
-    this.load.image("bomb", "assets/sprites/bomb.gif");
+    this.load.image("bomb", "assets/sprites/bombBee.png");
 
     this.load.audio("laser", "assets/audio/laser.wav");
     this.load.audio("jump", "assets/audio/jump.wav");
     this.load.audio("scream", "assets/audio/scream.wav");
   }
   createGround(x, y) {
-    this.groundGroup.create(x, y, "ground");
+    this.groundGroup.create(x, y, "ground")
+    .setScrollFactor(1);
+  }
+
+  createMultiGround(){
+    let x = 0;
+    let y = 440;
+    this.createGround(70, 540);
+      for(let i=0; i<13;i++){
+        x+=Phaser.Math.Between(100, 200)
+        y+=Phaser.Math.Between(-160, 100)
+        console.log("x--->",x)
+        console.log("y--->",y)
+        this.createGround(x, y)
+      }
+
+
+
+
+    // this.createGround(60, 540);
+    // this.createGround(160, 540);
+    // this.createGround(260, 540);
+    // this.createGround(360, 540);
+    // this.createGround(600, 580);
+    // this.createGround(480, 650);
+    // this.createGround(850, 540);
+    // this.createGround(720, 650);
+    // this.createGround(960, 650);
+    // this.createGround(1060, 650);
+    // this.createGround(1160, 650);
+    // this.createGround(1260, 650);
+    // this.createGround(520, 340);
+    // this.createGround(1200, 200);
+    // this.createGround(720, 250);
+    // this.createGround(900, 150);
   }
   createBomb() {
     this.bomb = this.bombs
       .create(Phaser.Math.Between(0, 800), Phaser.Math.Between(0, 800), "bomb")
-      .setScale(1.5);
+      .setScale(0.5);
     this.bomb.setBounce(1);
     this.bomb.setCollideWorldBounds(true);
     this.bomb.setVelocity(Phaser.Math.Between(-500, 500), 20);
@@ -53,7 +87,7 @@ export default class FgScene extends Phaser.Scene {
   createEnemy() {
     this.enemy = new Enemy(
       this,
-      Phaser.Math.Between(0, 800),
+      Phaser.Math.Between(0,1200),
       0,
       "brandon"
     ).setScale(0.2);
@@ -79,24 +113,11 @@ export default class FgScene extends Phaser.Scene {
         this.physics.add.collider(this.player, this.enemy);
       }
     }, 3000);
-    this.groundGroup = this.physics.add.staticGroup({ classType: Ground });
-    this.gun = new Gun(this, 200, 400, "gun").setScale(0.25);
-    this.createGround(60, 540);
-    this.createGround(160, 540);
-    this.createGround(260, 540);
-    this.createGround(360, 540);
-    this.createGround(600, 580);
-    this.createGround(480, 650);
-    this.createGround(850, 540);
-    this.createGround(720, 650);
-    this.createGround(960, 650);
-    this.createGround(1060, 650);
-    this.createGround(1160, 650);
-    this.createGround(1260, 650);
-    this.createGround(520, 340);
-    this.createGround(1200, 200);
-    this.createGround(720, 250);
-    this.createGround(900, 150);
+    this.groundGroup = this.physics.add.staticGroup({ 
+      key: "ground",
+     });
+    this.gun = new Gun(this, 100, 400, "gun").setScale(0.25);
+    this.createMultiGround();
 
     this.physics.add.collider(this.player, this.groundGroup);
     this.physics.add.collider(this.enemy, this.groundGroup);
@@ -136,7 +157,7 @@ export default class FgScene extends Phaser.Scene {
       if (this.Health > 0) {
         this.createBomb();
       }
-    }, 15000);
+    }, 10000);
 
     this.physics.add.collider(
       this.player,
@@ -145,6 +166,8 @@ export default class FgScene extends Phaser.Scene {
       null,
       this
     );
+
+    // this.cameras.main.setBounds(0,0,5000,600);
   }
 
   hitBomb() {
@@ -220,8 +243,7 @@ export default class FgScene extends Phaser.Scene {
     this.player.armed = true;
   }
 
-  // time: total time elapsed (ms)
-  // delta: time elapsed (ms) since last update() call. 16.666 ms @ 60fps
+  
   update(time, delta) {
     this.gun.update(
       time,
@@ -232,5 +254,8 @@ export default class FgScene extends Phaser.Scene {
     );
     this.player.update(this.cursors, this.jumpSound);
     this.enemy.update(this.screamSound);
+
   }
+
+ 
 }
