@@ -18,6 +18,7 @@ import config from './config/config'
 import BgScene from './scenes/BgScene';
 import FgScene from './scenes/FgScene';
 import GameOver from './scenes/GameOver';
+import YouWin from './scenes/YouWin'
 import MainScene from './scenes/MainScene';
 import Text from "./scenes/Text"
 
@@ -31,6 +32,7 @@ class Game extends Phaser.Game {
     this.scene.add('BgScene', BgScene)
     this.scene.add('FgScene', FgScene)
     this.scene.add('GameOver', GameOver)
+    this.scene.add('YouWin',YouWin)
     this.scene.add('MainScene', MainScene)
     this.scene.add('Text', Text)
     this.scene.start('MainScene')

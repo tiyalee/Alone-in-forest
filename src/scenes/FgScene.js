@@ -10,10 +10,9 @@ import {event} from "./event"
 export default class FgScene extends Phaser.Scene {
   constructor() {
     super("FgScene");
-    // this.score = 0;
+
     this.Health = 100;
-    // this.scoreText;
-    this.HealthText;
+    
     this.collectGun = this.collectGun.bind(this);
     this.fireLaser = this.fireLaser.bind(this);
     this.hit = this.hit.bind(this);
@@ -51,7 +50,7 @@ export default class FgScene extends Phaser.Scene {
     let x = 40;
     let y = 480;
     this.createGround(60, 540);
-    for (let i = 0; i < 200; i++) {
+    for (let i = 0; i < 300; i++) {
       if (i < 30) {
         x += Phaser.Math.Between(100, 250);
       } else if (i < 60) {
@@ -100,22 +99,7 @@ export default class FgScene extends Phaser.Scene {
   }
   create() {
 
-    // this.graphics = this.add.graphics()
-    // this.graphics.fillStyle(0x808080);
-    // this.graphics.fillRoundedRect(10,10,200,20,5);
-    // this.graphics.fillStyle(0x00ff00);
-    // this.graphics.fillRoundedRect(10,10,100,20,5)
-     
-    this.HealthText = this.add.text(
-      16 + this.cameras.main.scrollX,
-      60,
-      "Health: 100",
-      {
-        fontSize: "32px",
-        backgroundColor: "white",
-        fill: "#000",
-      }
-    );
+    
     this.player = new Player(this, 40, 400, "josh").setScale(0.25);
     this.createEnemy();
 
@@ -182,12 +166,14 @@ export default class FgScene extends Phaser.Scene {
     this.bombInterval = setInterval(() => {
   
         this.createBomb();
+        // this.physics.add.overlap(this.lasers, this.bomb, this.hitB, null, this);
+        this.physics.add.collider(this.lasers, this.bomb);
       
     }, 1000);
 
     this.physics.add.collider(
       this.player,
-      this.bombs,
+      this.bomb,
       this.hitBomb,
       null,
       this
@@ -203,7 +189,8 @@ export default class FgScene extends Phaser.Scene {
       this.player.setY(1500);
     } else {
       this.Health -= 1;
-      this.HealthText.setText("Health: " + this.Health);
+    
+      event.emit("HealthText")
     }
   }
   fireLaser(x, y, left) {
@@ -240,16 +227,14 @@ export default class FgScene extends Phaser.Scene {
   // hitB(bomb, laser) {
   //   laser.setActive(false);
   //   laser.setVisible(false);
-  //   bomb.y = 800;
-  //   bomb.setActive(false);
-  //   bomb.setVisible(false);
+  //   bomb.dead(this.screamSound);
   //  event.emit("scoreText");
   // }
 
 
   enemyHit(enemy,player) {
     this.Health -= 1;
-    this.HealthText.setText("Health: " + this.Health);
+    event.emit("HealthText")
   }
   createAnimations() {
     this.anims.create({
@@ -288,6 +273,12 @@ export default class FgScene extends Phaser.Scene {
       this.scene.start("GameOver");
       // this.scene.stop('BgScene')
       return;
+    }else if(this.player.x > this.scale.width*9){
+      clearInterval(this.enemyInterval);
+      clearInterval(this.bombInterval);
+      this.scene.stop("FgScene");
+      this.scene.start("YouWin");
+
     }
 
     this.gun.update(
@@ -298,7 +289,7 @@ export default class FgScene extends Phaser.Scene {
       this.laserSound
     );
     this.player.update(this.cursors, this.jumpSound);
-    this.enemy.update(this.screamSound);
+    // this.enemy.update(this.screamSound);
 
     if (this.cursors.left.isDown) {
       this.cameras.main.scrollX = this.player.x - 300;

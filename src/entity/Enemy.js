@@ -15,10 +15,12 @@ export default class Enemy extends Phaser.Physics.Arcade.Sprite {
 //     this.setPosition(x, y)
 //   }
   update(screamSound) {
-    if (!this.playedSound) {
+    if (y>800 || !this.playedSound) {
       this.playedSound = true;
       screamSound.play();
     }
+
+    
   }
 
   dead(screamSound) {
