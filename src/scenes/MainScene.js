@@ -1,5 +1,6 @@
 import 'phaser'
 
+
 export default class MainScene extends Phaser.Scene {
   constructor() {
     super('MainScene');
@@ -8,5 +9,6 @@ export default class MainScene extends Phaser.Scene {
   create() {
     this.scene.launch('BgScene');
     this.scene.launch('FgScene');
+    this.scene.launch('Text')
   }
 }

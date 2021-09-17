@@ -4,13 +4,15 @@ import Enemy from "../entity/Enemy";
 import Gun from "../entity/Gun";
 import Laser from "../entity/Laser";
 import Bomb from "../entity/Bomb";
+import GameOver from "./GameOver";
+import {event} from "./event"
 
 export default class FgScene extends Phaser.Scene {
   constructor() {
     super("FgScene");
-    this.score = 0;
+    // this.score = 0;
     this.Health = 100;
-    this.scoreText;
+    // this.scoreText;
     this.HealthText;
     this.collectGun = this.collectGun.bind(this);
     this.fireLaser = this.fireLaser.bind(this);
@@ -22,9 +24,9 @@ export default class FgScene extends Phaser.Scene {
       frameWidth: 340,
       frameHeight: 460,
     });
-    this.load.spritesheet("brandon", "assets/sprites/brandon.png", {
+    this.load.spritesheet("brandon", "assets/sprites/monster.png", {
       frameWidth: 340,
-      frameHeight: 460,   
+      frameHeight: 460,
     });
     this.load.image("ground", "assets/sprites/ground1.png", {
       frameWidth: 120,
@@ -33,89 +35,111 @@ export default class FgScene extends Phaser.Scene {
 
     this.load.image("gun", "assets/sprites/gun.png");
     this.load.image("laserBolt", "assets/sprites/laserBolt.png");
-    this.load.image("bomb", "assets/sprites/bombBee.png");
+    this.load.image("bomb", "assets/sprites/monster.png");
 
     this.load.audio("laser", "assets/audio/laser.wav");
     this.load.audio("jump", "assets/audio/jump.wav");
     this.load.audio("scream", "assets/audio/scream.wav");
+
+    this.cursors = this.input.keyboard.createCursorKeys();
   }
   createGround(x, y) {
-    this.groundGroup.create(x, y, "ground")
-    .setScrollFactor(1);
+    this.groundGroup.create(x, y, "ground");
   }
 
-  createMultiGround(){
-    let x = 0;
-    let y = 440;
-    this.createGround(70, 540);
-      for(let i=0; i<13;i++){
-        x+=Phaser.Math.Between(100, 200)
-        y+=Phaser.Math.Between(-160, 100)
-        console.log("x--->",x)
-        console.log("y--->",y)
-        this.createGround(x, y)
+  createMultiGround() {
+    let x = 40;
+    let y = 480;
+    this.createGround(60, 540);
+    for (let i = 0; i < 200; i++) {
+      if (i < 30) {
+        x += Phaser.Math.Between(100, 250);
+      } else if (i < 60) {
+        x += Phaser.Math.Between(250, 300);
+      } else {
+        x += Phaser.Math.Between(250, 350);
       }
-
-
-
-
-    // this.createGround(60, 540);
-    // this.createGround(160, 540);
-    // this.createGround(260, 540);
-    // this.createGround(360, 540);
-    // this.createGround(600, 580);
-    // this.createGround(480, 650);
-    // this.createGround(850, 540);
-    // this.createGround(720, 650);
-    // this.createGround(960, 650);
-    // this.createGround(1060, 650);
-    // this.createGround(1160, 650);
-    // this.createGround(1260, 650);
-    // this.createGround(520, 340);
-    // this.createGround(1200, 200);
-    // this.createGround(720, 250);
-    // this.createGround(900, 150);
+      if (y > 540) {
+        y -= 100;
+      } else if(y< 200 ){
+        y+=100;
+      }
+      else {
+        y += Phaser.Math.Between(-100, 100);
+      }
+      this.createGround(x, y);
+    }
   }
   createBomb() {
-    this.bomb = this.bombs
-      .create(Phaser.Math.Between(0, 800), Phaser.Math.Between(0, 800), "bomb")
-      .setScale(0.5);
-    this.bomb.setBounce(1);
-    this.bomb.setCollideWorldBounds(true);
-    this.bomb.setVelocity(Phaser.Math.Between(-500, 500), 20);
-  }
-  createEnemy() {
-    this.enemy = new Enemy(
-      this,
-      Phaser.Math.Between(0,1200),
+    this.bomb =this.bombs.create(
+     
+      Phaser.Math.Between(0, 1200) + this.cameras.main.scrollX,
       0,
-      "brandon"
-    ).setScale(0.2);
+        "bomb"
+      )
+      .setScale(0.6)
+    this.bomb.setBounce(1);
+    // this.bomb.setCollideWorldBounds(true);
+    this.bomb.setVelocity(Phaser.Math.Between(-500, 500), 
+    Phaser.Math.Between(-500, 500));
+  }
 
-    this.physics.add.collider(this.enemy, this.groundGroup);
+  createEnemy() {
+    if (this.Health > 0) {
+      this.enemy = new Enemy(
+        this,
+        Phaser.Math.Between(0, 1200) + this.cameras.main.scrollX,
+        0,
+        "brandon"
+      )
+        .setScale(0.5)
+        .setScrollFactor(1);
+
+      this.physics.add.collider(this.enemy, this.groundGroup);
+    }
   }
   create() {
-    this.scoreText = this.add.text(16, 16, "Score: 0", {
-      fontSize: "32px",
-      fill: "#000",
-    });
-    this.HealthText = this.add.text(16, 60, "Health: 100", {
-      fontSize: "32px",
-      fill: "#000",
-    });
+
+    // this.graphics = this.add.graphics()
+    // this.graphics.fillStyle(0x808080);
+    // this.graphics.fillRoundedRect(10,10,200,20,5);
+    // this.graphics.fillStyle(0x00ff00);
+    // this.graphics.fillRoundedRect(10,10,100,20,5)
+     
+    this.HealthText = this.add.text(
+      16 + this.cameras.main.scrollX,
+      60,
+      "Health: 100",
+      {
+        fontSize: "32px",
+        backgroundColor: "white",
+        fill: "#000",
+      }
+    );
     this.player = new Player(this, 40, 400, "josh").setScale(0.25);
     this.createEnemy();
-    setInterval(() => {
+
+    // for(let i=0; i< 100;i++){
+    //   this.createEnemy();
+    //       this.physics.add.overlap(this.lasers, this.enemy, this.hit, null, this);
+    //       this.physics.add.collider(this.lasers, this.enemy);
+    //       this.physics.add.collider(this.player, this.enemy);
+    // }
+
+
+    this.enemyInterval = setInterval(() => {
       if (this.Health > 0) {
         this.createEnemy();
         this.physics.add.overlap(this.lasers, this.enemy, this.hit, null, this);
+        this.physics.add.overlap(this.player, this.enemy, this.enemyHit, null, this);
         this.physics.add.collider(this.lasers, this.enemy);
+        this.physics.add.collider(this.enemy, this.enemy);
         this.physics.add.collider(this.player, this.enemy);
       }
     }, 3000);
-    this.groundGroup = this.physics.add.staticGroup({ 
+    this.groundGroup = this.physics.add.staticGroup({
       key: "ground",
-     });
+    });
     this.gun = new Gun(this, 100, 400, "gun").setScale(0.25);
     this.createMultiGround();
 
@@ -143,6 +167,8 @@ export default class FgScene extends Phaser.Scene {
 
     this.physics.add.overlap(this.lasers, this.enemy, this.hit, null, this);
     this.physics.add.collider(this.lasers, this.enemy);
+    // this.physics.add.overlap(this.lasers, this.bomb, this.hitB, null, this);
+    this.physics.add.collider(this.lasers, this.bomb);
 
     this.jumpSound = this.sound.add("jump");
     this.screamSound = this.sound.add("scream");
@@ -153,11 +179,11 @@ export default class FgScene extends Phaser.Scene {
       runChildUpdate: true,
       allowGravity: false,
     });
-    setInterval(() => {
-      if (this.Health > 0) {
+    this.bombInterval = setInterval(() => {
+  
         this.createBomb();
-      }
-    }, 10000);
+      
+    }, 1000);
 
     this.physics.add.collider(
       this.player,
@@ -167,17 +193,14 @@ export default class FgScene extends Phaser.Scene {
       this
     );
 
-    // this.cameras.main.setBounds(0,0,5000,600);
+    this.cameras.main.setBounds(0, 0, this.scale.width*10, 600);
   }
 
   hitBomb() {
     // this.player.flipY;
     // this.player.setY(500);
     if (this.Health <= 0) {
-      this.HealthText.setText("You are death!");
-      this.player.flipY;
-      this.player.setY(800);
-      this.physics.pause();
+      this.player.setY(1500);
     } else {
       this.Health -= 1;
       this.HealthText.setText("Health: " + this.Health);
@@ -211,8 +234,22 @@ export default class FgScene extends Phaser.Scene {
     laser.setActive(false);
     laser.setVisible(false);
     enemy.dead(this.screamSound);
-    this.score += 100;
-    this.scoreText.setText("Score: " + this.score);
+  event.emit("scoreText");
+  }
+
+  // hitB(bomb, laser) {
+  //   laser.setActive(false);
+  //   laser.setVisible(false);
+  //   bomb.y = 800;
+  //   bomb.setActive(false);
+  //   bomb.setVisible(false);
+  //  event.emit("scoreText");
+  // }
+
+
+  enemyHit(enemy,player) {
+    this.Health -= 1;
+    this.HealthText.setText("Health: " + this.Health);
   }
   createAnimations() {
     this.anims.create({
@@ -243,8 +280,16 @@ export default class FgScene extends Phaser.Scene {
     this.player.armed = true;
   }
 
-  
   update(time, delta) {
+    if (this.Health < 0 || this.player.y > 600) {
+      clearInterval(this.enemyInterval);
+      clearInterval(this.bombInterval);
+      this.scene.stop("FgScene");
+      this.scene.start("GameOver");
+      // this.scene.stop('BgScene')
+      return;
+    }
+
     this.gun.update(
       time,
       this.player,
@@ -255,7 +300,10 @@ export default class FgScene extends Phaser.Scene {
     this.player.update(this.cursors, this.jumpSound);
     this.enemy.update(this.screamSound);
 
+    if (this.cursors.left.isDown) {
+      this.cameras.main.scrollX = this.player.x - 300;
+    } else if (this.cursors.right.isDown) {
+      this.cameras.main.scrollX = this.player.x - 300;
+    }
   }
-
- 
 }

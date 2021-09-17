@@ -1,5 +1,4 @@
 import "phaser";
-
 export default class BgScene extends Phaser.Scene {
   constructor() {
     super("BgScene");
@@ -38,9 +37,10 @@ export default class BgScene extends Phaser.Scene {
       .setScale(2.91)
       .setScrollFactor(0);
 
-    this.createAligned(totalW, 0.25 * h, "cloud", 0.05);
-    this.createAligned(totalW, 0.6 * h, "mountain", 0.1);
-    this.createAligned(totalW, 0.8 * h, "pine1", 0.25);
+
+    this.createAligned(totalW, 0.25 * h, "cloud", 0.1);
+    this.createAligned(totalW, 0.6 * h, "mountain", 0.25);
+    this.createAligned(totalW, 0.8 * h, "pine1", 0.5);
     this.createAligned(totalW, h, "pine2", 1);
 
     this.cameras.main.setBounds(0,0,totalW,h);

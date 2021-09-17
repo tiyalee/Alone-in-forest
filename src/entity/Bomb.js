@@ -11,29 +11,15 @@ export default class Monster extends Phaser.Physics.Arcade.Sprite {
     this.speed = Phaser.Math.GetSpeed(80, 1);
     this.lifespan = LIFE_SPAN;
     this.body.setAllowGravity(false);
-    this.reset(x, y)
+
     
   }
-  reset(x, y) {
-    this.setActive(true);
-    this.setVisible(true);
-    this.lifespan = LIFE_SPAN;
-    this.setPosition(x, y)
-  }
-  
-  update(time, delta) {
-    this.lifespan -= delta;
-    const moveDistance = this.speed * delta
-    if (this.facingLeft) {
-      this.x -= moveDistance
-    } else {
-      this.x += moveDistance
-    }
+  // reset(x, y) {
+  //   this.setActive(true);
+  //   this.setVisible(true);
+  //   this.lifespan = LIFE_SPAN;
+  //   this.setPosition(x, y)
+  // }
 
-    if (this.lifespan <= 0) {
-      this.setActive(false);
-      this.setVisible(false);
-    }
-  }
   
 }

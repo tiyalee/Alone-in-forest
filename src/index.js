@@ -17,7 +17,9 @@ import 'phaser';
 import config from './config/config'
 import BgScene from './scenes/BgScene';
 import FgScene from './scenes/FgScene';
+import GameOver from './scenes/GameOver';
 import MainScene from './scenes/MainScene';
+import Text from "./scenes/Text"
 
 class Game extends Phaser.Game {
   constructor() {
@@ -28,7 +30,9 @@ class Game extends Phaser.Game {
     // << ADD ALL SCENES HERE >>
     this.scene.add('BgScene', BgScene)
     this.scene.add('FgScene', FgScene)
+    this.scene.add('GameOver', GameOver)
     this.scene.add('MainScene', MainScene)
+    this.scene.add('Text', Text)
     this.scene.start('MainScene')
 
     // Start the game with the mainscene
