@@ -4,7 +4,7 @@
   "description": "A workshop for getting started with Phaser",
   "main": "src/index.js",
   "scripts": {
-    "start": "webpack-dev-server"
+    "start": "node server"
   },
   "dependencies": {
     "phaser": "^3.15.1"
