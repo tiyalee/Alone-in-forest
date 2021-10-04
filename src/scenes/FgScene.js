@@ -23,7 +23,7 @@ export default class FgScene extends Phaser.Scene {
       frameWidth: 340,
       frameHeight: 460,
     });
-    this.load.spritesheet("brandon", "assets/sprites/monster.png", {
+    this.load.spritesheet("poisonButterfly", "assets/sprites/monster.png", {
       frameWidth: 340,
       frameHeight: 460,
     });
@@ -34,7 +34,7 @@ export default class FgScene extends Phaser.Scene {
 
     this.load.image("gun", "assets/sprites/gun.png");
     this.load.image("laserBolt", "assets/sprites/laserBolt.png");
-    this.load.image("bomb", "assets/sprites/monster.png");
+    this.load.image("bomb", "assets/sprites/bombBee.png");
 
     this.load.audio("laser", "assets/audio/laser.wav");
     this.load.audio("jump", "assets/audio/jump.wav");
@@ -89,7 +89,7 @@ export default class FgScene extends Phaser.Scene {
         this,
         Phaser.Math.Between(0, 1200) + this.cameras.main.scrollX,
         0,
-        "brandon"
+        "poisonButterfly"
       )
         .setScale(0.5)
         .setScrollFactor(1);
